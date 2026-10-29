@@ -1,10 +1,35 @@
 @import url("https://fonts.googleapis.com/css?family=Voltaire");
-#world {
-  position: absolute;
+
+/* Reset básico: evita margens que quebram o 100% de largura/altura */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+}
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+#world {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh; /* corrige a barra de endereço no mobile */
   background-color: #dbe6e6;
   overflow: hidden;
+  touch-action: none; /* evita scroll/zoom acidental ao jogar no toque */
 }
 
 #gameoverInstructions {
@@ -12,35 +37,34 @@
   font-family: "Voltaire", sans-serif;
   font-weight: bold;
   text-transform: uppercase;
-  font-size: 120px;
+  font-size: clamp(32px, 9vw, 120px);
+  line-height: 1.1;
   text-align: center;
   color: #ffc5a2;
   opacity: 0;
   left: 50%;
   top: 50%;
   width: 100%;
+  padding: 0 5vw;
   transform: translate(-50%, -100%);
+  user-select: none;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  pointer-events: none;
   transition: all 500ms ease-in-out;
 }
+
 #gameoverInstructions.show {
   opacity: 1;
   transform: translate(-50%, -50%);
-  transition: all 500ms ease-in-out;
 }
 
 #dist {
   position: absolute;
   left: 50%;
-  top: 50px;
-  transform: translate(-50%, 0%);
+  top: calc(var(--safe-top) + clamp(16px, 5vh, 50px));
+  transform: translate(-50%, 0);
+  user-select: none;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
 }
 
 .label {
@@ -48,7 +72,7 @@
   font-family: "Voltaire", sans-serif;
   text-transform: uppercase;
   color: #ffa873;
-  font-size: 12px;
+  font-size: clamp(10px, 1.6vw, 12px);
   letter-spacing: 2px;
   text-align: center;
   margin-bottom: 5px;
@@ -58,27 +82,26 @@
   position: relative;
   text-transform: uppercase;
   color: #dc5f45;
-  font-size: 40px;
-  font-family: "Voltaire";
+  font-size: clamp(28px, 6vw, 40px);
+  font-family: "Voltaire", sans-serif;
   text-align: center;
 }
 
 #credits {
   position: absolute;
   width: 100%;
-  margin: auto;
   bottom: 0;
-  margin-bottom: 20px;
+  margin: 0;
+  padding: 0 16px;
+  margin-bottom: calc(var(--safe-bottom) + 12px);
   font-family: "Voltaire", sans-serif;
   color: #544027;
-  font-size: 12px;
+  font-size: clamp(9px, 1.5vw, 12px);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   text-align: center;
+  user-select: none;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
 }
 
 #credits a {
@@ -93,20 +116,56 @@
   position: absolute;
   width: 100%;
   bottom: 0;
-  margin: auto;
-  margin-bottom: 50px;
+  margin: 0;
+  padding: 0 16px;
+  margin-bottom: calc(var(--safe-bottom) + 40px);
   font-family: "Voltaire", sans-serif;
   color: #dc5f45;
-  font-size: 16px;
+  font-size: clamp(12px, 2.2vw, 16px);
   letter-spacing: 1px;
   text-transform: uppercase;
   text-align: center;
+  user-select: none;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
 }
 
 .lightInstructions {
   color: #5f9042;
+}
+
+/* Celulares em modo paisagem (pouca altura) */
+@media (max-height: 480px) and (orientation: landscape) {
+  #dist {
+    top: calc(var(--safe-top) + 8px);
+  }
+
+  #gameoverInstructions {
+    font-size: clamp(28px, 8vh, 64px);
+  }
+
+  #instructions {
+    margin-bottom: calc(var(--safe-bottom) + 28px);
+  }
+
+  #credits {
+    margin-bottom: calc(var(--safe-bottom) + 6px);
+  }
+}
+
+/* Telas muito pequenas */
+@media (max-width: 360px) {
+  .label {
+    letter-spacing: 1px;
+  }
+
+  #instructions {
+    letter-spacing: 0.5px;
+  }
+}
+
+/* Respeita quem prefere menos animação */
+@media (prefers-reduced-motion: reduce) {
+  #gameoverInstructions {
+    transition: none;
+  }
 }
